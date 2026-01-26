@@ -77,10 +77,6 @@ with left_col:
     )
     SKILLS=role_data["skills"]
 
-    #temp file
-    st.write("Debug -> Deparment: ", department)
-    st.write("Debug -> Role:", role)
-    st.write("Debug -> Skills:", SKILLS)
 
     mode = st.radio(
         "choose resume source",
