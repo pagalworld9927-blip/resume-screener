@@ -1,10 +1,14 @@
 import streamlit as st 
 import pandas as pd
+import logging
+import src.loggers
 import os
 from src.pipeline.pipeline import run_resume_screening
 from src.components.preprocessing import transform_text
-from src.components.preprocessing import extract_text_from_pdf
+from src.components.pdf_reader import extract_text_from_pdf
 from src.config.roles_config import ROLES
+
+logger = logging.getLogger(__name__)
 
 st.set_page_config(page_title="Resume Screener", layout="wide")
 
@@ -14,14 +18,17 @@ st.write("Paste a Job Description and rank resumes with skill-gap analysis.")
 # load dataset
 @st.cache_data
 def load_resumes():
+    logger.info("load_resume function called.")
     base_dir = os.path.dirname(__file__)
     data_path = os.path.join(base_dir, "dataset", "Resume", "Resume.csv")
     df = pd.read_csv(data_path)
+    logger.info("Resume load succesfully.")
     return df['Resume_str'].dropna().tolist() 
 
 
 # score measure scale
 def score_scale(score: float):
+    logger.info("score_scale function called")
     if score >= 80:
         return {
             "label": "Excellent Match",
@@ -100,18 +107,22 @@ with right_col:
     results = []
     if analyze_btn:
         if not job_description.strip():
+            logger.warning("job description is empty")
             st.warning("Please paste a job description")
         else:
             with st.spinner("Anlyzing Resumes..."):
+                logger.info("Analyze button clicked. Mode: %s", mode)
 
                 if mode == "Use dataset resumes":
                     resumes = load_resumes()
+                    logger.info("Data sets resume loaded. Count: %d", len(resumes))
                     effective_top_n = top_n
                 else:
                     if uploaded_pdf is None:
                         st.warning("Please upload a PDF resume.")
                         st.stop()
                     pdf_text = extract_text_from_pdf(uploaded_pdf)
+                    logger.info("Pdf text extracted. Character %d", len(pdf_text))
                     resumes = [pdf_text]
                     effective_top_n = 1
                 
@@ -121,6 +132,7 @@ with right_col:
                 skill_vocab=SKILLS,
                 top_n=effective_top_n
             )
+            logger.info("pipeline completed.")
 
     st.success("Analysis Complete!")
 
