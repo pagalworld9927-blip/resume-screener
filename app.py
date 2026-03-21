@@ -1,10 +1,10 @@
 import streamlit as st 
 import pandas as pd
 import os
-from pipeline import run_resume_screening
-from preprocessing import transform_text
-from pdf_reader import extract_text_from_pdf
-from roles_config import ROLES
+from src.pipeline.pipeline import run_resume_screening
+from src.components.preprocessing import transform_text
+from src.components.preprocessing import extract_text_from_pdf
+from src.config.roles_config import ROLES
 
 st.set_page_config(page_title="Resume Screener", layout="wide")
 
