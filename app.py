@@ -3,6 +3,8 @@ import pandas as pd
 import logging
 import src.loggers
 import os
+import sys
+from src.exceptions import CustomException
 from src.pipeline.pipeline import run_resume_screening
 from src.components.preprocessing import transform_text
 from src.components.pdf_reader import extract_text_from_pdf
@@ -18,12 +20,16 @@ st.write("Paste a Job Description and rank resumes with skill-gap analysis.")
 # load dataset
 @st.cache_data
 def load_resumes():
-    logger.info("load_resume function called.")
-    base_dir = os.path.dirname(__file__)
-    data_path = os.path.join(base_dir, "dataset", "Resume", "Resume.csv")
-    df = pd.read_csv(data_path)
-    logger.info("Resume load succesfully.")
-    return df['Resume_str'].dropna().tolist() 
+    try:
+        logger.info("load_resume function called.")
+        base_dir = os.path.dirname(__file__)
+        data_path = os.path.join(base_dir, "dataset", "Resume", "Resume.csv")
+        df = pd.read_csv(data_path)
+        logger.info("Resume load succesfully.")
+        return df['Resume_str'].dropna().tolist()
+    except Exception as e:
+        logger.error("Load resume Failed: %s", str(e))
+        raise CustomException(e, sys)
 
 
 # score measure scale

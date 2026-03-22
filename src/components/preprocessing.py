@@ -2,6 +2,8 @@ import re
 import logging
 import nltk
 from nltk.corpus import stopwords
+from src.exceptions import CustomException
+import sys
 
 import src.loggers  # activates the logging config (creates log file, sets format & level)
 
@@ -24,16 +26,19 @@ def transform_text(text):
     if not text:
         logger.warning("transform_text() received empty or None input.")
         return ""
+    try:
+        logger.info("Starting text transformation. Input length: %d", len(text))
 
-    logger.info("Starting text transformation. Input length: %d", len(text))
+        text = text.lower()
+        text = re.sub('[^a-zA-Z0-9]+#', ' ', text)
+        text = re.sub(r"\s+", " ", text)
+        result = text.strip()
 
-    text = text.lower()
-    text = re.sub('[^a-zA-Z0-9]+#', ' ', text)
-    text = re.sub(r"\s+", " ", text)
-    result = text.strip()
-
-    logger.info("Text transformation complete. Output length: %d", len(result))
-    return result
+        logger.info("Text transformation complete. Output length: %d", len(result))
+        return result
+    except Exception as e:
+        logger.error("Text transformation Failed: %s", str(e))
+        raise CustomException(e, sys)
 
 
     

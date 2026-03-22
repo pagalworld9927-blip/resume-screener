@@ -1,6 +1,8 @@
 import logging
+import sys
 import src.loggers
 from pypdf import PdfReader
+from src.exceptions import CustomException
 
 logger = logging.getLogger(__name__)
 
@@ -25,4 +27,4 @@ def extract_text_from_pdf(pdf_file):
         return text
     except Exception as e:
         logger.error("something went wrong: %s", str(e)) 
-        raise
+        raise CustomException(sys, e)
