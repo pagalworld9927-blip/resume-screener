@@ -27,4 +27,4 @@ def extract_text_from_pdf(pdf_file):
         return text
     except Exception as e:
         logger.error("something went wrong: %s", str(e)) 
-        raise CustomException(sys, e)
+        raise CustomException(e, sys)
