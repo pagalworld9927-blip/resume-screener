@@ -1,7 +1,6 @@
 import streamlit as st 
 import pandas as pd
 import logging
-import src.loggers
 import os
 import sys
 from src.exceptions import CustomException
